@@ -52,8 +52,12 @@ module.exports = function (app, passport) {
 				}
 				if (!user) {
 				  var user = new database.UserModel({
+					nickname: '',
 					name: profile.username,
 					username: profile.id,
+					email: profile.account_email,
+					gender: profile.gender,
+					age_range: profile.age_range,
 					roles: ['authenticated'],
 					provider: 'kakao',
 					kakao: profile._json,

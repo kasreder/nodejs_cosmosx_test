@@ -15,7 +15,10 @@ Schema.createSchema = function(mongoose) {
 	var UserSchema = mongoose.Schema({
 		criteria : {type: String, 'default':''}
 		, email: {type: String, 'default':''}
-	    , name: {type: String, index: 'hashed', 'default':''}
+		, name: {type: String, index: 'hashed', 'default':''}
+		, nickname: {type: String, 'default':''}
+		, gender: {type: String, 'default':''}
+		, age_range: {type: String, 'default':''}
 	    , created_at: {type: Date, index: {unique: false}, 'default': Date.now}
 		, updated_at: {type: Date, index: {unique: false}, 'default': Date.now} 
 		, provider : {type : String, 'default' : ''}

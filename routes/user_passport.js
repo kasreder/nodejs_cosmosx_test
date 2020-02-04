@@ -12,7 +12,7 @@ module.exports = function(router, passport) {
     router.route('/').get(function(req, res) {
         console.log('/ 패스 요청됨. __홈 화면조회시');
         console.log('req.user의 정보 __홈 화면조회시');
-
+ 
         // 인증 안된 경우
         if (!req.user) {
             console.log('사용자 인증 안된 상태임. __홈 화면조회시');
@@ -22,11 +22,11 @@ module.exports = function(router, passport) {
             console.log('사용자 인증된 상태임. __홈 화면조회시_else');
             console.dir(req.user.provider);
             if (Array.isArray(req.user)) {
-                res.render('aaa.ejs', {user: req.user[0]._doc, login_success:true});
+                res.render('index.ejs', {user: req.user[0]._doc, login_success:true});
                 console.dir(req.user);
                 console.log('사용자 인증된 상태임. __홈 화면조회시_1111');
             } else  {
-                res.render('aaa.ejs', {user: req.user, login_success:true});
+                res.render('index.ejs', {user: req.user, login_success:true});
                 console.dir(req.user);
                 console.log('사용자 인증된 상태임. __홈 화면조회시_2222');
             }

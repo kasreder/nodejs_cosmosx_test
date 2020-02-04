@@ -16,7 +16,12 @@ Schema.createSchema = function(mongoose) {
 		email: {type: String, 'default':''}
 	    , hashed_password: {type: String, 'default':''}
 	    , name: {type: String, index: 'hashed', 'default':''}
-	    , salt: {type:String}
+		, level : {type: Number, 'default':1} 
+		, group : {type: String, 'default':"일반인"}
+		, nickname: {type: String, 'default':''}
+		, gender: {type: String, 'default':''}
+		, age_range: {type: String, 'default':''}
+		, salt: {type : String}
 	    , created_at: {type: Date, index: {unique: false}, 'default': Date.now}
 		, updated_at: {type: Date, index: {unique: false}, 'default': Date.now} 
 		, provider : {type : String, 'default' : ''}

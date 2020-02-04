@@ -51,13 +51,12 @@ var app = express();
 //===== 뷰 엔진 설정 =====//
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-console.log('뷰 엔진이 ejs로 설정되었습니다.');
-
 
 //===== 서버 변수 설정 및 static으로 public 폴더 설정  =====//
 console.log('config.server_port : %d', config.server_port);
 app.set('port', process.env.PORT || 52222);
- 
+
+
 
 // body-parser를 이용해 application/x-www-form-urlencoded 파싱
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -69,7 +68,7 @@ app.use(bodyParser.json())
 //app.use('/public', static(path.join(__dirname, 'public')));
 
 //app.use(express.static(__dirname + '/public'));
-app.use(express.static(path.join(__dirname , 'public'))); 
+app.use(express.static(path.join(__dirname , 'public')));
 
 // cookie-parser 설정
 app.use(cookieParser());
@@ -78,23 +77,30 @@ app.use(cookieParser());
 app.use(expressSession({
 	secret:'my key',
 	resave:true,
-	saveUninitialized:true
+	saveUninitialized:true,
+    // 세션 6시간 유지
+    cookie: {maxAge: 1000 * 60 * 60 * 6}
 }));
-
-
 
 //===== Passport 사용 설정 =====//
 // Passport의 세션을 사용할 때는 그 전에 Express의 세션을 사용하는 코드가 있어야 함
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
- 
-
+/**
+ * middleware로 사용자 로그인 여부 및 로그인 정보를 ejs로 보내준다.
+ */
+app.use((req, res, next) => {
+    res.locals.isAuth = req.isAuthenticated();
+    if (req.isAuthenticated()) {
+        res.locals.user = req.user;
+    }
+    next();
+});
 
 //라우팅 정보를 읽어들여 라우팅 설정
 var router = express.Router();
 route_loader.init(app, router);
-
 
 // 패스포트 설정
 var configPassport = require('./config/passport');
@@ -103,9 +109,6 @@ configPassport(app, passport);
 // 패스포트 라우팅 설정
 var userPassport = require('./routes/user_passport');
 userPassport(router, passport);
-
-
-
 //===== 404 에러 페이지 처리 =====//
 var errorHandler = expressErrorHandler({
  static: {
@@ -116,14 +119,11 @@ var errorHandler = expressErrorHandler({
 app.use( expressErrorHandler.httpError(404) );
 app.use( errorHandler );
 
-
 //===== 서버 시작 =====//
 
 //확인되지 않은 예외 처리 - 서버 프로세스 종료하지 않고 유지함
 process.on('uncaughtException', function (err) {
 	console.log('uncaughtException 발생함 : ' + err);
-	console.log('서버 프로세스 종료하지 않고 유지함.');
-	
 	console.log(err.stack);
 });
 
@@ -143,8 +143,6 @@ app.on('close', function () {
 // 시작된 서버 객체를 리턴받도록 합니다. 
 var server = http.createServer(app).listen(app.get('port'), function(){
 	console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
-
 	// 데이터베이스 초기화
 	database.init(app, config);
-   
 });
